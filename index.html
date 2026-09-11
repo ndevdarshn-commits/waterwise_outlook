@@ -1,0 +1,2321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WaterWise AI | Intelligent Water Distribution</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root{
+    --bg:#02050c;
+    --bg2:#06101d;
+    --blue:#35a9ff;
+    --cyan:#61e7ff;
+    --white:#f4f9ff;
+    --muted:#8ea4ba;
+    --line:rgba(130,190,255,.15);
+    --glass:rgba(8,18,32,.65);
+    --green:#45e0a2;
+    --orange:#ffb85c;
+    --red:#ff667d;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:
+        radial-gradient(circle at 50% 0%,#092342 0%,#02050c 42%);
+    color:var(--white);
+    font-family:Inter,Arial,sans-serif;
+    overflow-x:hidden;
+}
+
+/* =========================
+   STAR CANVAS
+========================= */
+
+#starCanvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:-2;
+}
+
+#glow{
+    position:fixed;
+    width:420px;
+    height:420px;
+    border-radius:50%;
+    background:radial-gradient(
+        circle,
+        rgba(30,150,255,.12),
+        transparent 70%
+    );
+    transform:translate(-50%,-50%);
+    pointer-events:none;
+    z-index:-1;
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+
+nav{
+    position:fixed;
+    top:18px;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(1100px,94%);
+    padding:12px 18px;
+    border:1px solid rgba(255,255,255,.1);
+    background:rgba(3,9,17,.65);
+    backdrop-filter:blur(22px);
+    -webkit-backdrop-filter:blur(22px);
+    border-radius:18px;
+    z-index:1000;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:800;
+    letter-spacing:-.5px;
+}
+
+.logo-mark{
+    width:32px;
+    height:32px;
+    border-radius:10px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,#25a9ff,#5deaff);
+    color:#00111e;
+    box-shadow:0 0 25px rgba(40,180,255,.35);
+}
+
+.navlinks{
+    display:flex;
+    gap:4px;
+    flex-wrap:wrap;
+}
+
+.navlinks a{
+    color:#b9cce0;
+    text-decoration:none;
+    font-size:13px;
+    padding:9px 12px;
+    border-radius:10px;
+    transition:.25s;
+}
+
+.navlinks a:hover{
+    color:white;
+    background:rgba(255,255,255,.08);
+}
+
+/* =========================
+   GENERAL
+========================= */
+
+section{
+    position:relative;
+}
+
+.container{
+    width:min(1180px,92%);
+    margin:auto;
+}
+
+.section{
+    padding:120px 0;
+}
+
+.eyebrow{
+    color:var(--cyan);
+    text-transform:uppercase;
+    letter-spacing:3px;
+    font-size:11px;
+    font-weight:800;
+    margin-bottom:16px;
+}
+
+.title{
+    font-size:clamp(38px,6vw,76px);
+    line-height:.95;
+    letter-spacing:-4px;
+}
+
+.subtitle{
+    color:var(--muted);
+    max-width:650px;
+    line-height:1.7;
+    margin-top:25px;
+}
+
+.card{
+    background:linear-gradient(
+        145deg,
+        rgba(16,34,56,.72),
+        rgba(4,12,22,.65)
+    );
+    border:1px solid var(--line);
+    border-radius:24px;
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    box-shadow:
+        0 20px 70px rgba(0,0,0,.3),
+        inset 0 1px rgba(255,255,255,.04);
+}
+
+.grid{
+    display:grid;
+    gap:20px;
+}
+
+.grid3{
+    grid-template-columns:repeat(3,1fr);
+}
+
+.grid2{
+    grid-template-columns:repeat(2,1fr);
+}
+
+.btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:13px 20px;
+    border-radius:12px;
+    text-decoration:none;
+    color:white;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.06);
+    transition:.25s;
+    cursor:pointer;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+    background:rgba(255,255,255,.11);
+}
+
+.btn.primary{
+    background:linear-gradient(135deg,#1598ff,#48d8ff);
+    color:#00111e;
+    font-weight:800;
+    border:none;
+    box-shadow:0 12px 35px rgba(30,160,255,.22);
+}
+
+.tag{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:100px;
+    font-size:11px;
+    background:rgba(60,180,255,.09);
+    color:#8fdcff;
+    border:1px solid rgba(80,190,255,.16);
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding-top:90px;
+}
+
+.hero-content{
+    max-width:900px;
+}
+
+.hero h1{
+    font-size:clamp(60px,10vw,140px);
+    line-height:.83;
+    letter-spacing:-8px;
+    margin-bottom:35px;
+}
+
+.gradient{
+    background:linear-gradient(
+        100deg,
+        #fff,
+        #63caff,
+        #a7efff
+    );
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+.hero-buttons{
+    display:flex;
+    gap:12px;
+    margin-top:30px;
+    flex-wrap:wrap;
+}
+
+.hero-status{
+    display:flex;
+    gap:20px;
+    margin-top:55px;
+    color:#7891a8;
+    font-size:12px;
+}
+
+.status-dot{
+    width:7px;
+    height:7px;
+    display:inline-block;
+    border-radius:50%;
+    background:#44e4a3;
+    box-shadow:0 0 15px #44e4a3;
+    margin-right:6px;
+}
+
+/* =========================
+   PARTICLE TITLE SECTION
+========================= */
+
+.particle-title-section{
+    height:150vh;
+    min-height:1000px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    overflow:hidden;
+}
+
+.particle-title-inner{
+    position:sticky;
+    top:0;
+    height:100vh;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.particle-copy{
+    position:absolute;
+    z-index:2;
+    pointer-events:none;
+    transition:opacity .4s;
+}
+
+.particle-copy small{
+    color:#72dcff;
+    text-transform:uppercase;
+    letter-spacing:5px;
+    font-size:10px;
+}
+
+.particle-copy h2{
+    font-size:clamp(44px,8vw,100px);
+    line-height:.9;
+    letter-spacing:-5px;
+    margin-top:18px;
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.section-heading{
+    margin-bottom:45px;
+}
+
+.stat{
+    padding:28px;
+    min-height:155px;
+}
+
+.stat-label{
+    color:#7891a8;
+    font-size:12px;
+    margin-bottom:20px;
+}
+
+.stat-value{
+    font-size:38px;
+    font-weight:800;
+    letter-spacing:-2px;
+}
+
+.stat-small{
+    color:#5ce0b1;
+    font-size:12px;
+    margin-top:8px;
+}
+
+.panel{
+    padding:28px;
+}
+
+.panel h3{
+    font-size:18px;
+    margin-bottom:8px;
+}
+
+.panel p{
+    color:#7891a8;
+    font-size:13px;
+}
+
+/* =========================
+   PREDICTION
+========================= */
+
+.chart-wrap{
+    height:360px;
+    margin-top:25px;
+}
+
+.metric-row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:25px;
+}
+
+.metric{
+    padding:12px 15px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:12px;
+}
+
+.metric b{
+    display:block;
+    font-size:19px;
+    margin-bottom:3px;
+}
+
+.metric span{
+    font-size:11px;
+    color:#7f96aa;
+}
+
+/* =========================
+   DETECTION
+========================= */
+
+.alert{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:18px;
+    border-radius:15px;
+    margin-top:20px;
+    background:rgba(255,190,80,.06);
+    border:1px solid rgba(255,190,80,.18);
+}
+
+.alert-dot{
+    width:10px;
+    height:10px;
+    background:var(--orange);
+    border-radius:50%;
+    box-shadow:0 0 18px var(--orange);
+}
+
+.normal{
+    background:rgba(60,220,160,.05);
+    border-color:rgba(60,220,160,.16);
+}
+
+.normal .alert-dot{
+    background:var(--green);
+    box-shadow:0 0 18px var(--green);
+}
+
+.detector-number{
+    font-size:65px;
+    font-weight:800;
+    letter-spacing:-4px;
+}
+
+/* =========================
+   DIGITAL TWIN
+========================= */
+
+.twin{
+    padding:35px;
+    min-height:470px;
+    position:relative;
+    overflow:hidden;
+}
+
+.network{
+    height:350px;
+    position:relative;
+}
+
+.node{
+    position:absolute;
+    width:105px;
+    height:105px;
+    border-radius:50%;
+    border:1px solid rgba(100,210,255,.4);
+    background:radial-gradient(
+        circle,
+        rgba(60,190,255,.22),
+        rgba(5,15,27,.8)
+    );
+    display:grid;
+    place-items:center;
+    text-align:center;
+    font-size:11px;
+    box-shadow:0 0 40px rgba(30,160,255,.15);
+    z-index:3;
+}
+
+.node strong{
+    display:block;
+    font-size:20px;
+}
+
+.node1{left:5%;top:40%}
+.node2{left:32%;top:10%}
+.node3{left:32%;top:70%}
+.node4{left:65%;top:40%}
+.node5{right:0;top:10%}
+.node6{right:0;top:70%}
+
+.pipe{
+    position:absolute;
+    height:2px;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        #39bfff,
+        transparent
+    );
+    box-shadow:0 0 12px #2dafff;
+    transform-origin:left;
+    opacity:.55;
+}
+
+.pipe1{
+    width:290px;
+    left:13%;
+    top:52%;
+    transform:rotate(-18deg);
+}
+
+.pipe2{
+    width:290px;
+    left:13%;
+    top:52%;
+    transform:rotate(18deg);
+}
+
+.pipe3{
+    width:260px;
+    left:40%;
+    top:35%;
+    transform:rotate(12deg);
+}
+
+.pipe4{
+    width:260px;
+    left:40%;
+    top:68%;
+    transform:rotate(-12deg);
+}
+
+/* =========================
+   OPTIMISATION
+========================= */
+
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th,td{
+    padding:18px;
+    text-align:left;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    font-size:13px;
+}
+
+th{
+    color:#7791a8;
+    font-weight:500;
+}
+
+.ai-row{
+    background:rgba(40,170,255,.06);
+}
+
+.good{
+    color:var(--green);
+}
+
+/* =========================
+   SIMULATOR
+========================= */
+
+.simulator{
+    padding:35px;
+}
+
+.slider-row{
+    margin:28px 0;
+}
+
+.slider-row label{
+    display:flex;
+    justify-content:space-between;
+    color:#9eb2c7;
+    font-size:13px;
+    margin-bottom:12px;
+}
+
+input[type=range]{
+    width:100%;
+    accent-color:#40c8ff;
+}
+
+.sim-result{
+    padding:25px;
+    border-radius:17px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+}
+
+.sim-result strong{
+    font-size:34px;
+}
+
+/* =========================
+   ANALYTICS
+========================= */
+
+.progress{
+    height:8px;
+    background:rgba(255,255,255,.07);
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:10px;
+}
+
+.progress span{
+    display:block;
+    height:100%;
+    width:93%;
+    background:linear-gradient(90deg,#2aaaff,#67e8ff);
+    border-radius:20px;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+    padding:80px 0 40px;
+    border-top:1px solid rgba(255,255,255,.08);
+    color:#657e95;
+}
+
+.footer-flex{
+    display:flex;
+    justify-content:space-between;
+    gap:30px;
+    flex-wrap:wrap;
+}
+
+footer strong{
+    color:white;
+}
+
+/* =========================
+   REVEAL
+========================= */
+
+.reveal{
+    opacity:0;
+    transform:translateY(35px);
+    transition:1s ease;
+}
+
+.reveal.visible{
+    opacity:1;
+    transform:translateY(0);
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:800px){
+
+    nav{
+        top:8px;
+    }
+
+    .navlinks{
+        display:none;
+    }
+
+    .hero h1{
+        letter-spacing:-5px;
+    }
+
+    .grid3,
+    .grid2{
+        grid-template-columns:1fr;
+    }
+
+    .section{
+        padding:85px 0;
+    }
+
+    .node{
+        width:80px;
+        height:80px;
+        font-size:9px;
+    }
+
+    .node strong{
+        font-size:15px;
+    }
+
+    .pipe{
+        display:none;
+    }
+
+    .particle-title-section{
+        min-height:850px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="starCanvas"></canvas>
+<div id="glow"></div>
+
+<!-- =========================
+     NAVIGATION
+========================= -->
+
+<nav>
+    <div class="logo">
+        <div class="logo-mark">W</div>
+        <span>WaterWise AI</span>
+    </div>
+
+    <div class="navlinks">
+        <a href="#home">Home</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#predict">Predict</a>
+        <a href="#detect">Detect</a>
+        <a href="#twin">Digital Twin</a>
+        <a href="#optimise">Optimise</a>
+        <a href="#simulate">Simulate</a>
+    </div>
+</nav>
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero" id="home">
+
+    <div class="container hero-content">
+
+        <div class="eyebrow">
+            AI-POWERED WATER INFRASTRUCTURE
+        </div>
+
+        <h1>
+            Water<br>
+            <span class="gradient">Wise AI.</span>
+        </h1>
+
+        <p class="subtitle">
+            An intelligent water distribution system that predicts demand,
+            detects abnormal usage, simulates infrastructure and optimises
+            water allocation for communities.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="#dashboard" class="btn primary">
+                Explore system
+            </a>
+
+            <a href="#twin" class="btn">
+                Open Digital Twin
+            </a>
+        </div>
+
+        <div class="hero-status">
+            <span>
+                <i class="status-dot"></i>
+                SYSTEM ONLINE
+            </span>
+
+            <span>
+                AI MODEL ACTIVE
+            </span>
+
+            <span>
+                REAL-TIME SIMULATION
+            </span>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- =========================
+     PARTICLE TITLE
+========================= -->
+
+<section class="particle-title-section" id="particle-title">
+
+    <div class="particle-title-inner">
+
+        <div class="particle-copy">
+            <small>Intelligent infrastructure</small>
+
+            <h2>
+                WaterWise AI
+            </h2>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     DASHBOARD
+========================= -->
+
+<section class="section" id="dashboard">
+
+<div class="container">
+
+    <div class="section-heading reveal">
+        <div class="eyebrow">Command centre</div>
+
+        <h2 class="title">
+            One system.<br>
+            Complete visibility.
+        </h2>
+
+        <p class="subtitle">
+            WaterWise AI combines prediction, detection and optimisation
+            into one intelligent water management layer.
+        </p>
+    </div>
+
+
+    <div class="grid grid3 reveal">
+
+        <div class="card stat">
+            <div class="stat-label">
+                PREDICTED DEMAND
+            </div>
+
+            <div class="stat-value">
+                8,420 L
+            </div>
+
+            <div class="stat-small">
+                ↑ 4.2% from previous day
+            </div>
+        </div>
+
+
+        <div class="card stat">
+            <div class="stat-label">
+                RESERVOIR LEVEL
+            </div>
+
+            <div class="stat-value">
+                70%
+            </div>
+
+            <div class="stat-small">
+                Stable
+            </div>
+        </div>
+
+
+        <div class="card stat">
+            <div class="stat-label">
+                SYSTEM FAIRNESS
+            </div>
+
+            <div class="stat-value">
+                1.00
+            </div>
+
+            <div class="stat-small">
+                Optimal allocation
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="grid grid2 reveal" style="margin-top:20px">
+
+        <div class="card panel">
+
+            <h3>Water allocation</h3>
+
+            <p>
+                Current distribution across connected neighbourhoods.
+            </p>
+
+            <div class="metric-row">
+
+                <div class="metric">
+                    <b>2,400 L</b>
+                    <span>Zone A</span>
+                </div>
+
+                <div class="metric">
+                    <b>2,100 L</b>
+                    <span>Zone B</span>
+                </div>
+
+                <div class="metric">
+                    <b>1,950 L</b>
+                    <span>Zone C</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card panel">
+
+            <h3>System status</h3>
+
+            <p>
+                AI monitoring across the distribution network.
+            </p>
+
+            <div class="alert normal">
+                <div class="alert-dot"></div>
+
+                <div>
+                    <strong>All systems operational</strong>
+                    <br>
+                    <small style="color:#7993a8">
+                        No critical distribution failures detected.
+                    </small>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     PREDICT
+========================= -->
+
+<section class="section" id="predict">
+
+<div class="container">
+
+    <div class="section-heading reveal">
+
+        <div class="eyebrow">
+            Module 01
+        </div>
+
+        <h2 class="title">
+            Predict before<br>
+            demand arrives.
+        </h2>
+
+        <p class="subtitle">
+            WaterWise AI uses historical consumption and environmental
+            conditions to estimate future water demand.
+        </p>
+
+    </div>
+
+
+    <div class="card panel reveal">
+
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            gap:20px;
+            flex-wrap:wrap;
+            align-items:center;
+        ">
+
+            <div>
+                <h3>Demand forecast</h3>
+                <p>
+                    Random Forest prediction model
+                </p>
+            </div>
+
+            <span class="tag">
+                R² = 0.930
+            </span>
+
+        </div>
+
+        <div class="chart-wrap">
+            <canvas id="demandChart"></canvas>
+        </div>
+
+
+        <div class="metric-row">
+
+            <div class="metric">
+                <b>24.06 L</b>
+                <span>MAE</span>
+            </div>
+
+            <div class="metric">
+                <b>29.92 L</b>
+                <span>RMSE</span>
+            </div>
+
+            <div class="metric">
+                <b>0.930</b>
+                <span>R² SCORE</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     DETECT
+========================= -->
+
+<section class="section" id="detect">
+
+<div class="container">
+
+    <div class="section-heading reveal">
+
+        <div class="eyebrow">
+            Module 02
+        </div>
+
+        <h2 class="title">
+            Detect what<br>
+            shouldn't happen.
+        </h2>
+
+        <p class="subtitle">
+            Abnormal consumption patterns can indicate leakage,
+            unusual demand or distribution problems.
+        </p>
+
+    </div>
+
+
+    <div class="grid grid2">
+
+        <div class="card panel reveal">
+
+            <div class="stat-label">
+                ANOMALY SCORE
+            </div>
+
+            <div class="detector-number">
+                12%
+            </div>
+
+            <div class="progress">
+                <span style="width:12%"></span>
+            </div>
+
+            <p style="margin-top:15px">
+                Current network behaviour remains within the expected
+                operating range.
+            </p>
+
+        </div>
+
+
+        <div class="card panel reveal">
+
+            <h3>Detection engine</h3>
+
+            <p>
+                Continuous monitoring of expected versus observed
+                water usage.
+            </p>
+
+            <div class="alert normal">
+
+                <div class="alert-dot"></div>
+
+                <div>
+                    <strong>No critical anomaly</strong>
+                    <br>
+                    <small style="color:#7993a8">
+                        Consumption pattern is normal.
+                    </small>
+                </div>
+
+            </div>
+
+            <div class="alert">
+
+                <div class="alert-dot"></div>
+
+                <div>
+                    <strong>Zone C requires attention</strong>
+                    <br>
+                    <small style="color:#7993a8">
+                        Usage is slightly above predicted demand.
+                    </small>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     DIGITAL TWIN
+========================= -->
+
+<section class="section" id="twin">
+
+<div class="container">
+
+    <div class="section-heading reveal">
+
+        <div class="eyebrow">
+            Module 03
+        </div>
+
+        <h2 class="title">
+            A digital twin<br>
+            of the network.
+        </h2>
+
+        <p class="subtitle">
+            Visualise reservoirs, pumps, distribution zones and
+            water movement inside a simulated environment.
+        </p>
+
+    </div>
+
+
+    <div class="card twin reveal">
+
+        <div class="network">
+
+            <div class="pipe pipe1"></div>
+            <div class="pipe pipe2"></div>
+            <div class="pipe pipe3"></div>
+            <div class="pipe pipe4"></div>
+
+            <div class="node node1">
+                <div>
+                    <strong>70%</strong>
+                    Reservoir
+                </div>
+            </div>
+
+            <div class="node node2">
+                <div>
+                    <strong>82%</strong>
+                    Zone A
+                </div>
+            </div>
+
+            <div class="node node3">
+                <div>
+                    <strong>74%</strong>
+                    Zone B
+                </div>
+            </div>
+
+            <div class="node node4">
+                <div>
+                    <strong>91%</strong>
+                    Pump
+                </div>
+            </div>
+
+            <div class="node node5">
+                <div>
+                    <strong>78%</strong>
+                    Zone C
+                </div>
+            </div>
+
+            <div class="node node6">
+                <div>
+                    <strong>83%</strong>
+                    Zone D
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     OPTIMISE
+========================= -->
+
+<section class="section" id="optimise">
+
+<div class="container">
+
+    <div class="section-heading reveal">
+
+        <div class="eyebrow">
+            Module 04
+        </div>
+
+        <h2 class="title">
+            Don't just predict.<br>
+            Optimise.
+        </h2>
+
+        <p class="subtitle">
+            The system evaluates different allocation strategies and
+            selects a distribution that balances shortage, wastage,
+            energy and fairness.
+        </p>
+
+    </div>
+
+
+    <div class="card panel reveal">
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Shortage</th>
+                        <th>Wastage</th>
+                        <th>Energy</th>
+                        <th>Fairness</th>
+                        <th>Reward</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>Equal Distribution</td>
+                        <td>253.81 L</td>
+                        <td>20.62 L</td>
+                        <td>112 kWh</td>
+                        <td>0.99</td>
+                        <td>-1473.52</td>
+                    </tr>
+
+                    <tr>
+                        <td>Proportional Distribution</td>
+                        <td>233.20 L</td>
+                        <td>0.00 L</td>
+                        <td>112 kWh</td>
+                        <td>1.00</td>
+                        <td>-1398.99</td>
+                    </tr>
+
+                    <tr class="ai-row">
+
+                        <td>
+                            <strong>
+                                WaterWise-AI
+                            </strong>
+                        </td>
+
+                        <td class="good">
+                            Optimised
+                        </td>
+
+                        <td class="good">
+                            Minimised
+                        </td>
+
+                        <td class="good">
+                            Efficient
+                        </td>
+
+                        <td class="good">
+                            1.00
+                        </td>
+
+                        <td class="good">
+                            Improved
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     SIMULATOR
+========================= -->
+
+<section class="section" id="simulate">
+
+<div class="container">
+
+    <div class="section-heading reveal">
+
+        <div class="eyebrow">
+            Scenario laboratory
+        </div>
+
+        <h2 class="title">
+            What if the<br>
+            conditions change?
+        </h2>
+
+        <p class="subtitle">
+            Experiment with population and rainfall to see how predicted
+            demand changes.
+        </p>
+
+    </div>
+
+
+    <div class="card simulator reveal">
+
+        <div class="slider-row">
+
+            <label>
+                <span>Population</span>
+                <span id="populationValue">5000</span>
+            </label>
+
+            <input
+                type="range"
+                id="population"
+                min="1000"
+                max="10000"
+                value="5000"
+            >
+
+        </div>
+
+
+        <div class="slider-row">
+
+            <label>
+                <span>Rainfall</span>
+                <span>
+                    <span id="rainValue">20</span> mm
+                </span>
+            </label>
+
+            <input
+                type="range"
+                id="rainfall"
+                min="0"
+                max="200"
+                value="20"
+            >
+
+        </div>
+
+
+        <div class="grid grid3">
+
+            <div class="sim-result">
+
+                <div class="stat-label">
+                    ESTIMATED DEMAND
+                </div>
+
+                <strong id="simDemand">
+                    8,420 L
+                </strong>
+
+            </div>
+
+
+            <div class="sim-result">
+
+                <div class="stat-label">
+                    WATER SAVING
+                </div>
+
+                <strong id="simSaving">
+                    12%
+                </strong>
+
+            </div>
+
+
+            <div class="sim-result">
+
+                <div class="stat-label">
+                    SYSTEM STATUS
+                </div>
+
+                <strong style="color:#45e0a2">
+                    STABLE
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     ANALYTICS
+========================= -->
+
+<section class="section">
+
+<div class="container">
+
+    <div class="grid grid3 reveal">
+
+        <div class="card panel">
+
+            <div class="stat-label">
+                PREDICTION ACCURACY
+            </div>
+
+            <h3>93%</h3>
+
+            <div class="progress">
+                <span style="width:93%"></span>
+            </div>
+
+        </div>
+
+
+        <div class="card panel">
+
+            <div class="stat-label">
+                FAIRNESS INDEX
+            </div>
+
+            <h3>1.00</h3>
+
+            <div class="progress">
+                <span style="width:100%"></span>
+            </div>
+
+        </div>
+
+
+        <div class="card panel">
+
+            <div class="stat-label">
+                RESERVOIR REMAINING
+            </div>
+
+            <h3>700 L</h3>
+
+            <div class="progress">
+                <span style="width:70%"></span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+<div class="container footer-flex">
+
+    <div>
+        <strong>WaterWise AI</strong>
+        <br><br>
+        Intelligent water distribution for smarter communities.
+    </div>
+
+    <div>
+        AI · Prediction · Detection · Optimisation
+    </div>
+
+</div>
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   WATERWISE STARFIELD + SCROLL PARTICLE TYPOGRAPHY
+===================================================== */
+
+const canvas = document.getElementById("starCanvas");
+const ctx = canvas.getContext("2d");
+
+let W, H;
+
+function resizeCanvas(){
+
+    W = canvas.width = window.innerWidth * devicePixelRatio;
+    H = canvas.height = window.innerHeight * devicePixelRatio;
+
+    canvas.style.width = window.innerWidth + "px";
+    canvas.style.height = window.innerHeight + "px";
+
+    ctx.setTransform(
+        devicePixelRatio,
+        0,
+        0,
+        devicePixelRatio,
+        0,
+        0
+    );
+}
+
+resizeCanvas();
+
+window.addEventListener("resize", resizeCanvas);
+
+
+/* -----------------------------------------
+   PARTICLES
+----------------------------------------- */
+
+const particles = [];
+
+const PARTICLE_COUNT =
+    window.innerWidth < 700 ? 380 : 800;
+
+for(let i=0;i<PARTICLE_COUNT;i++){
+
+    particles.push({
+
+        x:Math.random()*window.innerWidth,
+
+        y:Math.random()*window.innerHeight,
+
+        z:Math.random(),
+
+        size:Math.random()*1.8+.2,
+
+        speed:Math.random()*.35+.05,
+
+        alpha:Math.random()*.7+.2,
+
+        phase:Math.random()*Math.PI*2,
+
+        tx:0,
+        ty:0
+
+    });
+
+}
+
+
+/* -----------------------------------------
+   GENERATE WATERWISE AI TEXT POINTS
+----------------------------------------- */
+
+const textCanvas =
+    document.createElement("canvas");
+
+const textCtx =
+    textCanvas.getContext("2d");
+
+function generateTextPoints(){
+
+    const width = Math.min(
+        window.innerWidth * .95,
+        1100
+    );
+
+    const height = 300;
+
+    textCanvas.width = width;
+    textCanvas.height = height;
+
+    textCtx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+    textCtx.fillStyle = "white";
+
+    const fontSize =
+        window.innerWidth < 600
+        ? 90
+        : 150;
+
+    textCtx.font =
+        `900 ${fontSize}px Arial`;
+
+    textCtx.textAlign = "center";
+    textCtx.textBaseline = "middle";
+
+    textCtx.fillText(
+        "WATERWISE AI",
+        width/2,
+        height/2
+    );
+
+    const image =
+        textCtx.getImageData(
+            0,
+            0,
+            width,
+            height
+        );
+
+    const points = [];
+
+    const step =
+        window.innerWidth < 600 ? 5 : 4;
+
+    for(
+        let y=0;
+        y<height;
+        y+=step
+    ){
+
+        for(
+            let x=0;
+            x<width;
+            x+=step
+        ){
+
+            const index =
+                (y*width+x)*4;
+
+            if(image.data[index+3]>150){
+
+                points.push({
+
+                    x:
+                        x -
+                        width/2,
+
+                    y:
+                        y -
+                        height/2
+
+                });
+
+            }
+
+        }
+
+    }
+
+    return points;
+}
+
+let textPoints =
+    generateTextPoints();
+
+window.addEventListener(
+    "resize",
+    ()=>{
+        textPoints =
+            generateTextPoints();
+    }
+);
+
+
+/* -----------------------------------------
+   PARTICLE TITLE SECTION
+----------------------------------------- */
+
+const particleSection =
+    document.getElementById(
+        "particle-title"
+    );
+
+function getTextProgress(){
+
+    const rect =
+        particleSection.getBoundingClientRect();
+
+    const vh =
+        window.innerHeight;
+
+    /*
+       0 = particles scattered
+       1 = particles fully form text
+    */
+
+    let progress =
+        1 -
+        Math.abs(
+            rect.top -
+            vh*.25
+        ) /
+        (vh*.65);
+
+    progress =
+        Math.max(
+            0,
+            Math.min(
+                1,
+                progress
+            )
+        );
+
+    return progress;
+}
+
+
+/* -----------------------------------------
+   MOUSE
+----------------------------------------- */
+
+let mouseX =
+    window.innerWidth/2;
+
+let mouseY =
+    window.innerHeight/2;
+
+window.addEventListener(
+    "mousemove",
+    e=>{
+
+        mouseX=e.clientX;
+        mouseY=e.clientY;
+
+        const glow =
+            document.getElementById("glow");
+
+        glow.style.left =
+            e.clientX+"px";
+
+        glow.style.top =
+            e.clientY+"px";
+
+    }
+);
+
+
+/* -----------------------------------------
+   SCROLL
+----------------------------------------- */
+
+let scrollY=window.scrollY;
+
+window.addEventListener(
+    "scroll",
+    ()=>{
+        scrollY=window.scrollY;
+    },
+    {passive:true}
+);
+
+
+/* -----------------------------------------
+   ANIMATION
+----------------------------------------- */
+
+function animate(){
+
+    ctx.clearRect(
+        0,
+        0,
+        window.innerWidth,
+        window.innerHeight
+    );
+
+    const progress =
+        getTextProgress();
+
+    const sectionRect =
+        particleSection.getBoundingClientRect();
+
+    const centerX =
+        window.innerWidth/2;
+
+    const centerY =
+        window.innerHeight/2;
+
+
+    particles.forEach(
+        (p,i)=>{
+
+            /*
+             * Normal star movement
+             */
+
+            p.y -=
+                p.speed *
+                (1+p.z*2);
+
+            if(p.y < -10){
+
+                p.y =
+                    window.innerHeight+10;
+
+                p.x =
+                    Math.random() *
+                    window.innerWidth;
+
+            }
+
+
+            /*
+             * Scroll parallax
+             */
+
+            let drawX =
+                p.x +
+                Math.sin(
+                    p.phase+
+                    performance.now()*.0004
+                ) *
+                .5;
+
+            let drawY =
+                p.y -
+                (scrollY*.015*p.z);
+
+
+            /*
+             * TEXT TARGET
+             */
+
+            if(textPoints.length){
+
+                const target =
+                    textPoints[
+                        i %
+                        textPoints.length
+                    ];
+
+                const targetX =
+                    centerX+
+                    target.x;
+
+                const targetY =
+                    centerY+
+                    target.y;
+
+
+                drawX =
+                    drawX*(1-progress)+
+                    targetX*progress;
+
+                drawY =
+                    drawY*(1-progress)+
+                    targetY*progress;
+
+            }
+
+
+            /*
+             * Mouse interaction
+             */
+
+            const dx =
+                drawX-mouseX;
+
+            const dy =
+                drawY-mouseY;
+
+            const dist =
+                Math.sqrt(
+                    dx*dx+
+                    dy*dy
+                );
+
+            if(dist<100){
+
+                const force =
+                    (100-dist)/100;
+
+                drawX +=
+                    dx/dist*
+                    force*
+                    18;
+
+                drawY +=
+                    dy/dist*
+                    force*
+                    18;
+
+            }
+
+
+            /*
+             * Twinkle
+             */
+
+            const twinkle =
+                .65+
+                Math.sin(
+                    performance.now()*.002+
+                    p.phase
+                )*.25;
+
+            const alpha =
+                p.alpha*
+                twinkle;
+
+
+            /*
+             * Draw particle
+             */
+
+            ctx.beginPath();
+
+            ctx.arc(
+                drawX,
+                drawY,
+                p.size+
+                progress*.6,
+                0,
+                Math.PI*2
+            );
+
+            ctx.fillStyle =
+                `rgba(
+                    ${progress>0.5?100:150},
+                    ${progress>0.5?220:210},
+                    255,
+                    ${alpha}
+                )`;
+
+            ctx.fill();
+
+
+            /*
+             * Glow during text formation
+             */
+
+            if(progress>.55){
+
+                ctx.beginPath();
+
+                ctx.arc(
+                    drawX,
+                    drawY,
+                    4+
+                    progress*3,
+                    0,
+                    Math.PI*2
+                );
+
+                ctx.fillStyle =
+                    `rgba(
+                        70,
+                        190,
+                        255,
+                        ${.025*progress}
+                    )`;
+
+                ctx.fill();
+
+            }
+
+        }
+    );
+
+
+    requestAnimationFrame(
+        animate
+    );
+
+}
+
+animate();
+
+
+/* =====================================================
+   DEMAND CHART
+===================================================== */
+
+const chart =
+    document
+    .getElementById("demandChart")
+    .getContext("2d");
+
+new Chart(
+    chart,
+    {
+
+        type:"line",
+
+        data:{
+
+            labels:[
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri",
+                "Sat",
+                "Sun"
+            ],
+
+            datasets:[
+
+                {
+                    label:"Actual Demand",
+
+                    data:[
+                        7100,
+                        7500,
+                        7300,
+                        7900,
+                        8100,
+                        8500,
+                        8420
+                    ],
+
+                    borderColor:
+                        "#42c6ff",
+
+                    backgroundColor:
+                        "rgba(50,180,255,.08)",
+
+                    fill:true,
+
+                    tension:.45,
+
+                    pointRadius:3
+
+                },
+
+                {
+                    label:"AI Prediction",
+
+                    data:[
+                        7000,
+                        7600,
+                        7350,
+                        7800,
+                        8050,
+                        8380,
+                        8420
+                    ],
+
+                    borderColor:
+                        "#7be9ff",
+
+                    borderDash:[
+                        5,
+                        5
+                    ],
+
+                    fill:false,
+
+                    tension:.45,
+
+                    pointRadius:2
+
+                }
+
+            ]
+
+        },
+
+        options:{
+
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            plugins:{
+
+                legend:{
+                    labels:{
+                        color:"#8ea4ba"
+                    }
+                }
+
+            },
+
+            scales:{
+
+                x:{
+                    ticks:{
+                        color:"#657e95"
+                    },
+
+                    grid:{
+                        color:
+                            "rgba(255,255,255,.04)"
+                    }
+                },
+
+                y:{
+                    ticks:{
+                        color:"#657e95"
+                    },
+
+                    grid:{
+                        color:
+                            "rgba(255,255,255,.04)"
+                    }
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   SIMULATOR
+===================================================== */
+
+const population =
+    document.getElementById(
+        "population"
+    );
+
+const rainfall =
+    document.getElementById(
+        "rainfall"
+    );
+
+const populationValue =
+    document.getElementById(
+        "populationValue"
+    );
+
+const rainValue =
+    document.getElementById(
+        "rainValue"
+    );
+
+const simDemand =
+    document.getElementById(
+        "simDemand"
+    );
+
+const simSaving =
+    document.getElementById(
+        "simSaving"
+    );
+
+
+function updateSimulation(){
+
+    const pop =
+        Number(population.value);
+
+    const rain =
+        Number(rainfall.value);
+
+
+    populationValue.textContent =
+        pop.toLocaleString();
+
+    rainValue.textContent =
+        rain;
+
+
+    /*
+       Simplified frontend simulation.
+       The actual deployed ML model can later
+       be connected to this interface.
+    */
+
+    let demand =
+        4000+
+        pop*.75-
+        rain*8;
+
+
+    demand =
+        Math.max(
+            1500,
+            demand
+        );
+
+
+    let saving =
+        8+
+        rain*.045;
+
+
+    saving =
+        Math.min(
+            25,
+            saving
+        );
+
+
+    simDemand.textContent =
+        Math.round(demand)
+        .toLocaleString()+
+        " L";
+
+
+    simSaving.textContent =
+        saving.toFixed(1)+
+        "%";
+
+}
+
+
+population.addEventListener(
+    "input",
+    updateSimulation
+);
+
+rainfall.addEventListener(
+    "input",
+    updateSimulation
+);
+
+updateSimulation();
+
+
+/* =====================================================
+   SCROLL REVEAL
+===================================================== */
+
+const observer =
+    new IntersectionObserver(
+        entries=>{
+
+            entries.forEach(
+                entry=>{
+
+                    if(entry.isIntersecting){
+
+                        entry.target
+                            .classList
+                            .add("visible");
+
+                    }
+
+                }
+            );
+
+        },
+        {
+            threshold:.12
+        }
+    );
+
+
+document
+.querySelectorAll(".reveal")
+.forEach(
+    el=>observer.observe(el)
+);
+
+
+/* =====================================================
+   ACTIVE NAVIGATION
+===================================================== */
+
+const navLinks =
+    document.querySelectorAll(
+        ".navlinks a"
+    );
+
+navLinks.forEach(
+    link=>{
+
+        link.addEventListener(
+            "click",
+            ()=>{
+                navLinks.forEach(
+                    l=>l.style.color=""
+                );
+
+                link.style.color =
+                    "#61e7ff";
+            }
+        );
+
+    }
+);
+
+</script>
+
+</body>
+</html>
